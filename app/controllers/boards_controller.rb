@@ -10,6 +10,7 @@ class BoardsController < ApplicationController
   # GET /boards/1
   # GET /boards/1.json
   def show
+    @like = Like.where(user_id: current_user.id, board_id: params[:id])
   end
 
   # GET /boards/new
@@ -58,6 +59,33 @@ class BoardsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to boards_url, notice: 'Board was successfully destroyed.' }
       format.json { head :no_content }
+      format.js { redirect_to boards_url }
+    end
+  end
+
+  def user_like_board
+    # 만약에 좋아요를 누른상태라면
+    @like = Like.where(user_id: current_user.id, board_id: params[:board_id]).first
+    unless @like.nil?
+      @like.destroy
+      puts '좋아요 취소'
+    # 만약에 처음 좋아욜르 누른 상태라면
+    else
+      @like = Like.create(user_id: current_user.id, board_id: params[:board_id])
+      puts '좋아요 누름'
+    end
+  end
+
+  def create_comment
+    @comment = Comment.create(user_id: current_user.id, board_id: params[:id], contents: params[:contents])
+  end
+
+  def delete_comment
+    @comment.destroy
+    respond_to do |format|
+      format.html { redirect_to boards_url, notice: 'Comment was successfully destroyed.' }
+      format.json { head :no_content }
+      format.js { redirect_to boards_url }
     end
   end
 
