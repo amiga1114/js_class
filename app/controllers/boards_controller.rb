@@ -4,13 +4,21 @@ class BoardsController < ApplicationController
   # GET /boards
   # GET /boards.json
   def index
-    @boards = Board.all
+    @boards = Board.order("created_at DESC").page(params[:page])
+  end
+
+  def page_scroll
+    @boards = Board.order("created_at DESC").page(params[:page])
   end
 
   # GET /boards/1
   # GET /boards/1.json
   def show
-    @like = Like.where(user_id: current_user.id, board_id: params[:id])
+    if user_signed_in?
+      @like = Like.where(user_id: current_user.id, board_id: params[:id])
+    else
+      @like = []
+    end
   end
 
   # GET /boards/new
@@ -81,12 +89,12 @@ class BoardsController < ApplicationController
   end
 
   def delete_comment
-    @comment.destroy
-    respond_to do |format|
-      format.html { redirect_to boards_url, notice: 'Comment was successfully destroyed.' }
-      format.json { head :no_content }
-      format.js { redirect_to boards_url }
-    end
+    @comment = Comment.find(params[:comment_id]).destroy
+  end
+
+  def update_comment
+    @comment = Comment.find(params[:comment_id])
+    @comment.update(contents: params[:contents])
   end
 
   private

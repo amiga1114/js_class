@@ -3,7 +3,7 @@
 $(document).ready(function() {
   // == $(function() {})
   // var table = document.getElementsByClassName('board');
-  $('.board').click(function() {
+  $('.board').on('click', '.board', function() {
     location.href = '/boards/' + $(this).data('id');
   })
 })

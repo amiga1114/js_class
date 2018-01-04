@@ -31,6 +31,12 @@ class SessionsController < ApplicationController
     end
   end
 
+  def check_email
+    @email = params[:email]
+    @tmp = User.find_by(email: params[:email]).nil?
+  end
+
+
   # 로그아웃
   def signout
     session.delete(:user_id)

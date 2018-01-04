@@ -1,12 +1,18 @@
+<%= link_to '새글쓰기', new_board_path, class: 'btn btn-dark' %>
+<a class='btn btn-warning' id='change-title'>제목바꾸기</a>
+<a class='btn btn-danger color-btn' haha="text-danger">빨강</a>
+<a class='btn btn-primary color-btn' haha="text-primary">파랑</a>
+<a class='btn btn-warning color-btn' haha="text-warning">노랑</a>
+
 <table class="table table-hover text-center">
   <thead>
     <tr>
-      <th>글번호</th>
+      <th width="15%">글번호</th>
       <th>제목</th>
     </tr>
   </thead>
 
-  <tbody>
+  <tbody class="boards">
     <% @boards.each do |board| %>
       <tr class="board" data-id="<%= board.id %>">
         <td><%= board.id %></td>
@@ -18,19 +24,33 @@
 
 <br>
 
-<%= link_to '새글쓰기', new_board_path, class: 'btn btn-dark' %>
-<a class='btn btn-warning' id='change-title'>제목바꾸기</a>
-<a class='btn btn-danger color-btn' haha="text-danger">빨강</a>
-<a class='btn btn-primary color-btn' haha="text-primary">파랑</a>
-<a class='btn btn-warning color-btn' haha="text-warning">노랑</a>
-
 <% content_for :script do %>
 <script>
+  $(document).ready(function() {
+    // setInterval(function( { alert("Hello");}, 3000);
 
-
-
+    $('.table').on('click', '.board', function() {
+      location.href = '/boards/' + $(this).data('id');
+    })
+    var page_count = 2;
+    setInterval(function() {
+      // 1. 화면 최하단에 도착했을 때
+      if ($(window).scrollTop() +1 >= $(document).height() - $(window).height()) {
+        // console.log("제일 아래 도착했다!!!!");
+        // 2. 추가적인 40개의 element에 대한 요청을 보냄
+        $.ajax({
+          url: '/boards/page_scroll',
+          method: 'GET',
+          data: {
+            page: page_count++
+          }
+        })
+        // 3. 요청해서 응답으로 받은 element를 최하단에 추가
+      }
+    }, 3000);
+  })
 </script>
 <script src="change_title.js"></script>
 <script src="change-color.js"></script>
-<script src="tr_location.js"></script>
+<!-- <script src="tr_location.js"></script> -->
 <% end %>
